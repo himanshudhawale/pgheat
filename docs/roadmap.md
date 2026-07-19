@@ -9,29 +9,29 @@ Each milestone must remain useful without the next one.
 - [x] Document source statistics and metric limitations.
 - [x] Define the external-collector architecture.
 - [ ] Validate metric assumptions against PostgreSQL 16, 17, and 18.
-- [ ] Create a reproducible partitioned workload fixture.
+- [x] Create a reproducible partitioned workload fixture.
 
 ## M1: collector
 
-- Discover databases, partitioned parents, and leaf partitions.
-- Capture consistent raw samples.
-- Persist samples locally.
-- Detect counter resets, collection gaps, and relation identity changes.
-- Add `collect` and `doctor` commands.
+- [x] Discover partitioned parents and leaf partitions in one database.
+- [x] Capture consistent raw samples.
+- [x] Persist samples locally in SQLite.
+- [x] Detect counter resets, collection gaps, and relation identity changes.
+- [x] Add `collect` and `doctor` commands.
 
 ## M2: interval analysis
 
-- Calculate reset-safe deltas and rates.
-- Retain separate read, write, cache, and recency signals.
-- Add `top` and `history` commands.
-- Replay stored samples deterministically in tests.
+- [x] Calculate reset-safe deltas and rates.
+- [x] Retain separate read, write, cache, and recency signals.
+- [x] Add `top` and `history` commands.
+- [x] Replay stored samples deterministically in tests.
 
 ## M3: explainable classification
 
-- Add configurable observation windows and thresholds.
-- Emit `HOT`, `WARM`, `COLD`, `DORMANT`, and `UNKNOWN`.
-- Report evidence quality and confidence.
-- Add `explain` and machine-readable JSON output.
+- [x] Add configurable observation windows and thresholds.
+- [x] Emit `HOT`, `WARM`, `COLD`, `DORMANT`, and `UNKNOWN`.
+- [x] Report evidence quality and confidence.
+- [x] Add `explain` and machine-readable JSON output.
 
 ## M4: workload patterns
 

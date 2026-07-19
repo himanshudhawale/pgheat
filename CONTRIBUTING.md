@@ -22,6 +22,6 @@ Architecture changes should include an ADR under `docs/decisions/`.
 
 ## Development
 
-Build and test commands will be added when the implementation language and
-project structure are introduced. Do not add placeholder dependencies or CI
-workflows before they execute real checks.
+See [Development](docs/development.md) for installation, tests, live validation,
+and the project layout. Do not add dependencies or CI workflows before they
+execute a concrete project requirement.

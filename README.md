@@ -2,8 +2,8 @@
 
 Explainable hot, warm, and cold partition classification for PostgreSQL.
 
-> **Status:** design phase. pgheat does not move or delete data. The first
-> release will observe PostgreSQL statistics and produce read-only findings.
+> **Status:** alpha. pgheat collects and analyzes PostgreSQL statistics. It
+> does not move, detach, or delete data.
 
 PostgreSQL already records useful counters for every leaf partition because
 each partition is a physical relation. Those counters are cumulative, can
@@ -17,30 +17,88 @@ reset, and do not answer operational questions by themselves:
 pgheat will sample the built-in counters, calculate activity over explicit time
 windows, retain history, and explain every temperature classification.
 
-## Intended experience
+## Example output
 
 ```text
 $ pgheat top --parent public.events --window 24h
 
-PARTITION        STATE  READS/H  WRITES/H  LAST ACCESS  CONFIDENCE
-events_2026_07   HOT      8,412       936  4s ago       high
-events_2026_06   WARM       284         0  18m ago      high
-events_2025_12   COLD         2         0  11d ago      medium
-events_2024_01   DORMANT      0         0  124d ago     high
+PARTITION              STATE  CONF    SCANS/H  WRITES/H  BLOCKS/H
+public.events_2026_07  HOT    medium  8412.0   936.0     48210.0
+public.events_2026_06  WARM   medium  12.0     0.0       384.0
 
 $ pgheat explain public.events_2025_12
 
-State: COLD
+public.events_2025_12: COLD (confidence: high)
+Observed: 30.0d
 Why:
-  - 2 scans during the last 30 days
-  - no writes during the last 30 days
-  - 0.03% estimated block touches per hour
-  - observed continuously for 45 days
-Recommendation: collect 15 more days before considering archival
+  - no measured activity for 30.0d
 ```
 
-The values above illustrate the planned interface; they are not produced by an
-implementation yet.
+Values depend on the configured boundaries and collected workload.
+
+## Install
+
+pgheat requires Python 3.11 or newer and PostgreSQL 16 or newer.
+
+```shell
+git clone https://github.com/himanshudhawale/pgheat
+cd pgheat
+python -m pip install -e .
+```
+
+Provide the connection string through the environment rather than shell
+history:
+
+```shell
+export PGHEAT_DSN='postgresql://pgheat@localhost/app'
+pgheat doctor
+```
+
+On PowerShell:
+
+```powershell
+$env:PGHEAT_DSN = 'postgresql://pgheat@localhost/app'
+pgheat doctor
+```
+
+## Collect and analyze
+
+Each collection is an immutable baseline or observation. At least two
+collections are required to calculate activity:
+
+```shell
+pgheat collect
+# Wait for the desired sampling interval or run application workload.
+pgheat collect
+
+pgheat top
+pgheat history public.events_2026_01
+pgheat explain public.events_2026_01
+```
+
+The default SQLite history is `~/.pgheat/pgheat.db`. Override it globally:
+
+```shell
+pgheat --store ./pgheat.db collect
+pgheat --store ./pgheat.db --json top
+```
+
+Classifications use the most recent 90 days by default. All boundaries are
+visible CLI options:
+
+```shell
+pgheat top \
+  --window 90d \
+  --hot-scans-per-hour 100 \
+  --hot-writes-per-hour 100 \
+  --hot-blocks-per-hour 10000 \
+  --cold-after 7d \
+  --dormant-after 30d
+```
+
+`HOT` and `WARM` indicate measured activity. `COLD` and `DORMANT` require a
+continuous inactive observation window. `UNKNOWN` means pgheat does not have
+enough compatible evidence.
 
 ## Principles
 
@@ -55,10 +113,10 @@ implementation yet.
 - **Work with managed PostgreSQL.** The initial collector will use standard SQL
   views and require no custom server extension.
 
-## Initial scope
+## Implemented scope
 
-pgheat will target PostgreSQL 16 and newer and inspect declaratively partitioned
-tables. The first useful milestone includes:
+pgheat targets PostgreSQL 16 and newer and inspects declaratively partitioned
+tables. The current release includes:
 
 1. Periodic snapshots of per-partition table and I/O counters.
 2. Reset-safe delta calculation between samples.
@@ -66,8 +124,12 @@ tables. The first useful milestone includes:
 4. Explainable `HOT`, `WARM`, `COLD`, and `DORMANT` classifications.
 5. A CLI for ranking and explaining partitions.
 
+It also provides `doctor`, text and JSON output, source selection for
+multi-database stores, configurable lookback windows, and explicit reset/gap
+history.
+
 Seasonality detection, storage recommendations, dashboards, and cold-storage
-integrations come later.
+integrations remain future work.
 
 ## Documentation
 
@@ -76,6 +138,8 @@ integrations come later.
 - [Metric semantics](docs/metrics.md)
 - [Roadmap](docs/roadmap.md)
 - [ADR-0001: external collector first](docs/decisions/0001-external-collector-first.md)
+- [ADR-0002: Python implementation](docs/decisions/0002-python-implementation.md)
+- [Development](docs/development.md)
 - [Contributing](CONTRIBUTING.md)
 
 ## License

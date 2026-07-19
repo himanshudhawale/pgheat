@@ -117,6 +117,11 @@ The first classifier will support:
 `REHEATED` is an event indicating a transition from `COLD` or `DORMANT` to
 meaningful activity, not a permanent state.
 
+Classification uses a bounded recent window, 90 days by default. Intervals
+outside that window do not keep a partition warm forever. An interval crossing
+the window boundary is excluded because cumulative counters cannot reveal
+whether its activity occurred before or after the boundary.
+
 ## Confidence
 
 Confidence reflects evidence quality, not probability that a label is correct.

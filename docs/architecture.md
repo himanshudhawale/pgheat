@@ -2,7 +2,7 @@
 
 ## Overview
 
-The first pgheat release is an external collector and analyzer. It connects as
+pgheat is an external collector and analyzer. It connects as
 a normal PostgreSQL client and does not load code into the database server.
 
 ```text
@@ -47,8 +47,8 @@ overhead must be measured as part of the workload fixture.
 
 ### Sample store
 
-The store retains immutable raw samples. The initial implementation may use
-SQLite for a single collector. Its logical model must remain portable:
+The store retains immutable raw samples. The initial implementation uses
+SQLite for a single collector. Its logical model remains portable:
 
 ```text
 server
@@ -92,7 +92,7 @@ Classification thresholds are configuration, not universal constants.
 
 ### CLI
 
-The planned CLI supports discovery, ranking, history, and explanation:
+The CLI supports diagnostics, collection, ranking, history, and explanation:
 
 ```text
 pgheat collect
@@ -102,8 +102,9 @@ pgheat explain SCHEMA.PARTITION
 pgheat doctor
 ```
 
-`doctor` will identify disabled statistics, insufficient privileges, resets,
-large collection gaps, and unsupported PostgreSQL versions.
+`doctor` identifies disabled statistics, insufficient privileges, partition
+availability, and unsupported PostgreSQL versions. Reset and collection-gap
+details are exposed by `history` and classification warnings.
 
 ## Deployment model
 
