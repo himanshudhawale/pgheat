@@ -9,8 +9,16 @@ description = "Explainable PostgreSQL partition temperature classification"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [
   { name = "Himanshu Dhawale" }
+]
+keywords = [
+  "postgresql",
+  "observability",
+  "partitioning",
+  "monitoring",
+  "database-performance"
 ]
 dependencies = [
   "psycopg[binary]>=3.2,<4"
@@ -25,12 +33,14 @@ classifiers = [
   "Topic :: System :: Monitoring"
 ]
 
+[project.urls]
+Homepage = "https://github.com/himanshudhawale/pgheat"
+Documentation = "https://github.com/himanshudhawale/pgheat/tree/main/docs"
+Issues = "https://github.com/himanshudhawale/pgheat/issues"
+Source = "https://github.com/himanshudhawale/pgheat"
+
 [project.scripts]
 pgheat = "pgheat.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-q"

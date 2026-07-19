@@ -40,6 +40,14 @@ Values depend on the configured boundaries and collected workload.
 
 pgheat requires Python 3.11 or newer and PostgreSQL 16 or newer.
 
+After the first PyPI release:
+
+```shell
+python -m pip install pgheat
+```
+
+Install the current source checkout for development:
+
 ```shell
 git clone https://github.com/himanshudhawale/pgheat
 cd pgheat
@@ -140,6 +148,7 @@ integrations remain future work.
 - [ADR-0001: external collector first](docs/decisions/0001-external-collector-first.md)
 - [ADR-0002: Python implementation](docs/decisions/0002-python-implementation.md)
 - [Development](docs/development.md)
+- [Releasing](docs/releasing.md)
 - [Contributing](CONTRIBUTING.md)
 
 ## License
